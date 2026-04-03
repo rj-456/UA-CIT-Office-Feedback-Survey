@@ -3,101 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UA-CIT Feedback Survey</title>
+    <title>UA-CIT Feedback Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
-        <h2>UA - College of Information Technology</h2>
-        <p class="subtitle">Office Feedback Survey</p>
+    <div class="portal-wrapper">
         
-        <form id="feedbackForm">
-            <label>Classification *</label>
-            <select id="classification" required style="margin-bottom: 10px;">
-                <option value="" disabled selected>Select your affiliation...</option>
-                <option value="Student">Student</option>
-                <option value="Guardian">Guardian</option>
-                <option value="Others">Others</option>
-            </select>
+        <div class="branding-panel">
+            <h2>UA-CIT</h2>
+            <p>Welcome to the College of Information Technology Office Feedback Survey Portal. Your insights and experiences help us build a better IT environment.</p>
+        </div>
 
-            <input type="text" id="otherClassification" placeholder="Please specify your classification..." style="display: none; margin-bottom: 20px;">
-
-            <div class="optional-box">
-                    <p class="optional-msg">Optional: Please provide your name and email address if you would like a direct response from the CIT Office.</p>
+        <div class="form-panel">
+            <form id="feedbackForm">
                 
-                <label>Full Name</label>
-                <input type="text" id="name" placeholder="Name">
+                <div class="form-group">
+                    <label>Classification *</label>
+                    <select id="classification" required>
+                        <option value="" disabled selected>Select your affiliation...</option>
+                        <option value="Student">Student</option>
+                        <option value="Guardian">Guardian</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
 
-                <label>Email Address</label>
-                <input type="email" id="email" placeholder="name@email.com">
-            </div>
+                <div class="form-group" id="otherClassGroup" style="display: none; margin-top: -10px;">
+                    <input type="text" id="otherClassification" placeholder="Please specify your classification...">
+                </div>
 
-            <label>Service Rating *</label>
-            <select id="rating" required>
-                <option value="" disabled selected>Rate your experience...</option>
-                <option value="5">5 - Excellent</option>
-                <option value="4">4 - Good</option>
-                <option value="3">3 - Average</option>
-                <option value="2">2 - Fair</option>
-                <option value="1">1 - Poor</option>
-            </select>
+                <div class="optional-box">
+                    <p class="optional-msg">Optional: Please provide your name and email address if you would like a direct response from the CIT Office.</p>
+                    
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label>Full Name</label>
+                        <input type="text" id="name" placeholder="Leave blank to remain anonymous">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Email Address</label>
+                        <input type="email" id="email" placeholder="Leave blank to remain anonymous">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Service Rating *</label>
+                    <select id="rating" required>
+                        <option value="" disabled selected>Rate your experience...</option>
+                        <option value="5">⭐⭐⭐⭐⭐ (5) - Excellent</option>
+                        <option value="4">⭐⭐⭐⭐ (4) - Good</option>
+                        <option value="3">⭐⭐⭐ (3) - Average</option>
+                        <option value="2">⭐⭐ (2) - Fair</option>
+                        <option value="1">⭐ (1) - Poor</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Feedback Message *</label>
+                    <textarea id="feedbackText" placeholder="Share your encrypted message here..." required></textarea>
+                </div>
+                
+                <button type="submit" id="submitBtn">Submit Securely</button>
+            </form>
             
-            <label>Feedback Message *</label>
-            <textarea id="feedbackText" placeholder="Your message will be encrypted securely..." required style="height: 120px;"></textarea>
-            
-            <button type="submit" id="submitBtn">Submit</button>
-        </form>
-        
-        <div id="status"></div>
+            <div id="status"></div>
+        </div>
+
     </div>
 
     <script>
-        // NEW LOGIC: Show/Hide the "Please specify" box
         const classDropdown = document.getElementById('classification');
+        const otherGroup = document.getElementById('otherClassGroup');
         const otherInput = document.getElementById('otherClassification');
 
         classDropdown.addEventListener('change', function() {
             if (this.value === 'Others') {
-                otherInput.style.display = 'block';
-                otherInput.required = true; // Force them to type something
+                otherGroup.style.display = 'block';
+                otherInput.required = true; 
             } else {
-                otherInput.style.display = 'none';
+                otherGroup.style.display = 'none';
                 otherInput.required = false;
-                otherInput.value = ''; // Clear it out if they change their mind
+                otherInput.value = ''; 
             }
         });
 
-        // Submission Logic
         document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const btn = document.getElementById('submitBtn');
             const statusBox = document.getElementById('status');
-            btn.innerText = "⏳ Sending...";
+            btn.innerText = "⏳ Encrypting Data...";
             btn.disabled = true;
 
-            // Determine final classification value
             let finalClassification = document.getElementById('classification').value;
             if (finalClassification === 'Others') {
                 finalClassification = document.getElementById('otherClassification').value.trim();
             }
 
-            // Handle optional fields
             const rawName = document.getElementById('name').value.trim();
             const rawEmail = document.getElementById('email').value.trim();
 
             const payload = {
                 classification: finalClassification,
-                name: rawName === "" ? "Not Provided" : rawName,
-                email: rawEmail === "" ? "Not Provided" : rawEmail,
+                name: rawName === "" ? "Anonymous" : rawName,
+                email: rawEmail === "" ? "Not provided" : rawEmail,
                 rating: document.getElementById('rating').value,
                 feedbackText: document.getElementById('feedbackText').value
             };
 
             try {
-                // Ensure this matches your live backend URL!
+                // Secure connection to your Render vault
                 const BACKEND_URL = 'https://cit-feedback-survey-backend.onrender.com/api/feedback';
+
                 const response = await fetch(BACKEND_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -105,13 +122,12 @@
                 });
 
                 if (response.ok) {
-                    statusBox.innerText = "✅ Feedback Submitted!";
+                    statusBox.innerText = "✅ Feedback Submitted Successfully!";
                     statusBox.style.background = "#ecfdf5";
                     statusBox.style.color = "var(--success)";
                     
                     e.target.reset();
-                    // Hide the 'Others' box again after successful submission
-                    otherInput.style.display = 'none';
+                    otherGroup.style.display = 'none';
                     otherInput.required = false;
                 } else {
                     throw new Error('Server rejected');
@@ -121,7 +137,7 @@
                 statusBox.style.background = "#fef2f2";
                 statusBox.style.color = "var(--danger)";
             } finally {
-                btn.innerText = "Submit";
+                btn.innerText = "Submit Securely";
                 btn.disabled = false;
             }
         });
