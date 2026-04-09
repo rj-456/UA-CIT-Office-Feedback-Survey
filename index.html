@@ -137,7 +137,7 @@
                 });
 
                 if (response.ok) {
-                    statusBox.innerText = "✅ Feedback Submitted Successfully!";
+                    statusBox.innerText = "Feedback Submitted!";
                     statusBox.style.background = "#ecfdf5";
                     statusBox.style.color = "var(--success)";
                     
@@ -148,7 +148,7 @@
                     throw new Error('Server rejected');
                 }
             } catch (err) {
-                statusBox.innerText = "❌ Connection error. Please try again.";
+                statusBox.innerText = "Connection error. Please try again.";
                 statusBox.style.background = "#fef2f2";
                 statusBox.style.color = "var(--danger)";
             } finally {
