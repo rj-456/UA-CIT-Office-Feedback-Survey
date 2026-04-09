@@ -107,7 +107,7 @@
             
             const btn = document.getElementById('submitBtn');
             const statusBox = document.getElementById('status');
-            btn.innerText = "⏳ Encrypting Data...";
+            btn.innerText = "Submitting Data...";
             btn.disabled = true;
 
             let finalClassification = document.getElementById('classification').value;
@@ -152,7 +152,7 @@
                 statusBox.style.background = "#fef2f2";
                 statusBox.style.color = "var(--danger)";
             } finally {
-                btn.innerText = "Submit Securely";
+                btn.innerText = "Submit";
                 btn.disabled = false;
             }
         });
